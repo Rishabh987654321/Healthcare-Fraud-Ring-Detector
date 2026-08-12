@@ -18,7 +18,7 @@ export function RingDiagram({ ring, onSelectProvider }: RingDiagramProps) {
   const cypherQuery = CYPHER_QUERIES[cypherKey] || '';
 
   return (
-    <div className="w-full flex flex-col space-y-5 p-6 rounded-xl border border-flag/40 bg-flag-bg text-text-primary shadow-sm font-body min-w-0">
+    <div className="w-full flex flex-col space-y-4 sm:space-y-5 p-4 sm:p-6 rounded-xl border border-flag/40 bg-flag-bg text-text-primary shadow-sm font-body min-w-0">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-flag/20 pb-3 min-w-0">
         <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden mr-2">
@@ -26,51 +26,51 @@ export function RingDiagram({ ring, onSelectProvider }: RingDiagramProps) {
             <ShieldAlert className="h-4 w-4" />
           </div>
           <div className="min-w-0 flex-1 overflow-hidden">
-            <h4 className="font-display text-sm font-semibold text-text-primary truncate">
+            <h4 className="font-display text-xs sm:text-sm font-semibold text-text-primary truncate">
               {isRingA ? 'Ring A Evidence Diagram' : 'Ring B Evidence Diagram'}
             </h4>
-            <p className="text-[11px] text-text-muted font-mono truncate">
+            <p className="text-[10px] sm:text-[11px] text-text-muted font-mono truncate">
               Pattern: {isRingA ? 'Shared Address & Rare Procedure' : 'Shared Phone & Billing Outlier'}
             </p>
           </div>
         </div>
 
-        <Badge variant="destructive" className="font-mono text-xs uppercase px-2 py-0.5 bg-flag text-white font-bold shrink-0">
-          {ring.severity} Severity
+        <Badge variant="destructive" className="font-mono text-[10px] sm:text-xs uppercase px-2 py-0.5 bg-flag text-white font-bold shrink-0">
+          {ring.severity}
         </Badge>
       </div>
 
       {/* Static Purpose-Built Visual Hub Diagram */}
-      <div className="relative w-full py-6 px-4 bg-surface rounded-lg border border-border flex flex-col items-center justify-center space-y-6 min-h-[220px] shadow-sm min-w-0">
+      <div className="relative w-full py-4 sm:py-6 px-3 sm:px-4 bg-surface rounded-lg border border-border flex flex-col items-center justify-center space-y-4 sm:space-y-6 min-h-[200px] shadow-sm min-w-0">
         {/* Hub Node (Shared Address / Shared Phone) */}
-        <div className="z-10 px-4 py-2 rounded-lg border border-flag/40 bg-flag-bg shadow-sm flex items-center gap-2.5 text-xs font-mono font-semibold text-flag max-w-full min-w-0 overflow-hidden">
+        <div className="z-10 px-3 py-2 rounded-lg border border-flag/40 bg-flag-bg shadow-sm flex items-center gap-2 text-xs font-mono font-semibold text-flag max-w-full min-w-0 overflow-hidden">
           {ring.sharedNode.type === 'address' ? (
-            <MapPin className="h-4 w-4 shrink-0" />
+            <MapPin className="h-4 w-4 shrink-0 text-accent" />
           ) : (
-            <Phone className="h-4 w-4 shrink-0" />
+            <Phone className="h-4 w-4 shrink-0 text-accent" />
           )}
           <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
-            <span className="text-[10px] text-text-muted uppercase font-normal">Shared Resource Hub</span>
-            <span className="text-text-primary font-bold truncate" title={ring.sharedNode.label}>{ring.sharedNode.label}</span>
+            <span className="text-[9px] sm:text-[10px] text-text-muted uppercase font-normal">Shared Resource Hub</span>
+            <span className="text-text-primary font-bold truncate text-[11px] sm:text-xs" title={ring.sharedNode.label}>{ring.sharedNode.label}</span>
           </div>
         </div>
 
         {/* Connecting Line Indicator */}
         <div className="w-full flex items-center justify-center gap-2 my-1 min-w-0">
           <div className="h-0.5 flex-1 bg-border" />
-          <Badge variant="outline" className="font-mono text-[10px] text-flag border-flag/30 bg-flag-bg px-2.5 py-0.5 shrink-0 max-w-[80%] truncate">
+          <Badge variant="outline" className="font-mono text-[9px] sm:text-[10px] text-flag border-flag/30 bg-flag-bg px-2 py-0.5 shrink-0 max-w-[85%] truncate">
             {isRingA ? 'Shares Address Hub & Rare Procedure CPT-99499' : 'Shares Phone Contact & Billing Spike'}
           </Badge>
           <div className="h-0.5 flex-1 bg-border" />
         </div>
 
-        {/* Provider Cards Layout Row/Grid */}
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 z-10 min-w-0">
+        {/* Provider Cards Layout (Stacked on mobile < sm, grid on sm+) */}
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3 z-10 min-w-0">
           {ring.providers.map((pr) => (
             <Card
               key={pr.id}
               onClick={() => onSelectProvider && onSelectProvider(pr.id)}
-              className="border-l-[3px] border-l-flag border-border bg-surface hover:bg-bg-muted transition-all cursor-pointer p-4 space-y-1.5 shadow-sm group focus-visible:ring-2 focus-visible:ring-accent min-w-0 overflow-hidden"
+              className="border-l-[3px] border-l-flag border-border bg-surface hover:bg-bg-muted transition-all cursor-pointer p-3 sm:p-4 space-y-1.5 shadow-sm group focus-visible:ring-2 focus-visible:ring-accent min-w-0 overflow-hidden min-h-[44px]"
             >
               <div className="flex items-center justify-between gap-1 min-w-0">
                 <div className="flex items-center gap-1.5 text-accent font-display text-xs font-semibold min-w-0 flex-1 overflow-hidden">
@@ -94,7 +94,7 @@ export function RingDiagram({ ring, onSelectProvider }: RingDiagramProps) {
       </div>
 
       {/* Single Summary Line Underneath */}
-      <div className="p-4 rounded-lg border border-flag/30 bg-surface text-xs font-body text-text-primary leading-relaxed flex items-start gap-2.5 shadow-sm min-w-0 break-words">
+      <div className="p-3 sm:p-4 rounded-lg border border-flag/30 bg-surface text-xs font-body text-text-primary leading-relaxed flex items-start gap-2 sm:gap-2.5 shadow-sm min-w-0 break-words">
         <AlertTriangle className="h-4 w-4 text-flag shrink-0 mt-0.5" />
         <div>
           {isRingA ? (

@@ -40,17 +40,17 @@ export function SearchBar({ filterType, onSelectResult }: SearchBarProps) {
       : 'patients';
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 space-y-3 font-body">
-      <div className="space-y-2 shrink-0">
-        <div className="relative">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-text-muted" />
+    <div className="flex-1 flex flex-col min-h-0 space-y-3 font-body w-full">
+      <div className="space-y-2 shrink-0 w-full">
+        <div className="relative w-full">
+          <Search className="absolute left-3 top-3 sm:top-2.5 h-4 w-4 text-text-muted" />
           <Input
             type="text"
             placeholder="Search name, ID, NPI (e.g. PRV-RINGA-01)..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="pl-9 pr-8 bg-surface border-border text-sm font-body focus-visible:ring-2 focus-visible:ring-accent shadow-sm"
+            className="pl-9 pr-8 bg-surface border-border text-sm font-body h-10 sm:h-9 focus-visible:ring-2 focus-visible:ring-accent shadow-sm w-full"
           />
           {query && (
             <button
@@ -58,7 +58,7 @@ export function SearchBar({ filterType, onSelectResult }: SearchBarProps) {
               onClick={() => {
                 setQuery('');
               }}
-              className="absolute right-2.5 top-2.5 text-text-muted hover:text-text-primary rounded p-0.5 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
+              className="absolute right-2.5 top-2.5 text-text-muted hover:text-text-primary rounded p-1 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none min-h-[32px] min-w-[32px] flex items-center justify-center"
               aria-label="Clear search"
             >
               <X className="h-4 w-4" />
@@ -66,19 +66,19 @@ export function SearchBar({ filterType, onSelectResult }: SearchBarProps) {
           )}
         </div>
 
-        {/* Onboarding Suggestion Chips (Visible only when query is empty) */}
+        {/* Onboarding Suggestion Chips (Wraps gracefully on mobile) */}
         {!query.trim() && (
-          <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-            <span className="text-[10px] font-mono text-text-muted flex items-center gap-1">
+          <div className="flex items-center gap-1.5 flex-wrap pt-0.5 w-full">
+            <span className="text-[10px] font-mono text-text-muted flex items-center gap-1 shrink-0">
               <Sparkles className="h-3 w-3 text-accent shrink-0" />
-              <span>Quick hints:</span>
+              <span>Hints:</span>
             </span>
             {SUGGESTIONS.map((sug) => (
               <button
                 key={sug.value}
                 type="button"
                 onClick={() => setQuery(sug.value)}
-                className="bg-accent-muted hover:bg-accent/20 text-accent border border-accent/20 px-2 py-0.5 rounded text-[10px] font-mono transition-colors focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
+                className="bg-accent-muted hover:bg-accent/20 text-accent border border-accent/20 px-2 py-1 sm:py-0.5 rounded text-[10px] font-mono transition-colors min-h-[32px] sm:min-h-0 flex items-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
               >
                 {sug.label}
               </button>
@@ -88,7 +88,7 @@ export function SearchBar({ filterType, onSelectResult }: SearchBarProps) {
       </div>
 
       {/* Results / Browse Container taking full available vertical height */}
-      <div className="flex-1 overflow-y-auto min-h-0 space-y-2 pr-1">
+      <div className="flex-1 overflow-y-auto min-h-0 space-y-2 pr-1 w-full">
         {loading && (
           <div className="space-y-2 py-1">
             <SkeletonRow />
@@ -133,7 +133,7 @@ export function SearchBar({ filterType, onSelectResult }: SearchBarProps) {
               key={`${item.type}-${item.id}`}
               type="button"
               onClick={() => onSelectResult(item)}
-              className="w-full text-left p-3 rounded-md border border-border bg-surface hover:bg-bg-muted hover:border-accent/40 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none transition-all flex items-center justify-between group shadow-sm min-w-0"
+              className="w-full text-left p-3 rounded-md border border-border bg-surface hover:bg-bg-muted hover:border-accent/40 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none transition-all flex items-center justify-between group shadow-sm min-w-0 min-h-[44px]"
             >
               <div className="flex items-center gap-2.5 overflow-hidden min-w-0 flex-1">
                 <div className="h-7 w-7 rounded flex items-center justify-center shrink-0 bg-bg-muted border border-border group-hover:border-accent/30 text-accent">

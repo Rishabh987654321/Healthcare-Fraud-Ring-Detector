@@ -65,14 +65,14 @@ export function FraudRingsList({
   };
 
   return (
-    <div className="space-y-4 font-body min-w-0">
+    <div className="space-y-4 font-body min-w-0 w-full">
       {rings.map((ring) => {
         const isRingA = ring.kind === 'shared_address_procedure';
         const primaryProvider = ring.providers[0];
 
         return (
-          <Card key={ring.id} className="border-l-[3px] border-l-flag border-border bg-flag-bg shadow-sm overflow-hidden min-w-0">
-            <CardHeader className="p-3.5 pb-2 flex flex-row items-center justify-between space-y-0 min-w-0">
+          <Card key={ring.id} className="border-l-[3px] border-l-flag border-border bg-flag-bg shadow-sm overflow-hidden min-w-0 w-full">
+            <CardHeader className="p-3.5 sm:p-4 pb-2 flex flex-row items-center justify-between space-y-0 min-w-0">
               <div className="flex items-center gap-1.5 min-w-0 flex-1 overflow-hidden mr-1">
                 <ShieldAlert className="h-4 w-4 text-flag shrink-0" />
                 <CardTitle className="text-xs font-semibold text-text-primary truncate" title={isRingA ? 'Ring A: Shared Office Ring' : 'Ring B: Billing Outlier Spike'}>
@@ -84,7 +84,7 @@ export function FraudRingsList({
               </Badge>
             </CardHeader>
 
-            <CardContent className="p-3.5 pt-0 space-y-2.5 text-xs min-w-0">
+            <CardContent className="p-3.5 sm:p-4 pt-0 space-y-2.5 text-xs min-w-0">
               {/* Pattern Summary */}
               <div className="text-text-muted text-xs leading-relaxed break-words">
                 {isRingA ? (
@@ -122,7 +122,7 @@ export function FraudRingsList({
                 variant="outline"
                 size="sm"
                 onClick={() => setSelectedRingForDiagram(ring)}
-                className="w-full block h-8 text-xs border-flag/40 text-flag hover:bg-flag/10 hover:text-flag font-mono mt-1 bg-surface focus-visible:ring-2 focus-visible:ring-accent"
+                className="w-full block h-9 sm:h-8 text-xs border-flag/40 text-flag hover:bg-flag/10 hover:text-flag font-mono mt-1 bg-surface min-h-[36px] sm:min-h-0 focus-visible:ring-2 focus-visible:ring-accent"
               >
                 <div className="flex items-center justify-center gap-1.5 w-full">
                   <Eye className="h-3.5 w-3.5 shrink-0" />
@@ -137,9 +137,9 @@ export function FraudRingsList({
       {/* Ring Diagram Dialog Modal */}
       {selectedRingForDiagram && (
         <Dialog open={Boolean(selectedRingForDiagram)} onOpenChange={() => setSelectedRingForDiagram(null)}>
-          <DialogContent className="max-w-2xl bg-surface border-border shadow-xl p-6 overflow-hidden">
+          <DialogContent className="max-w-2xl bg-surface border-border shadow-xl p-4 sm:p-6 overflow-hidden max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-base font-display font-semibold text-text-primary">
+              <DialogTitle className="text-sm sm:text-base font-display font-semibold text-text-primary">
                 Fraud Ring Evidence Diagram
               </DialogTitle>
             </DialogHeader>

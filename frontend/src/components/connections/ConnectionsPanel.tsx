@@ -167,7 +167,7 @@ export function ConnectionsPanel({
   // Loading State: Skeleton Cards
   if (loading) {
     return (
-      <div className="w-full h-full p-6 space-y-4 bg-bg-muted overflow-y-auto min-w-0">
+      <div className="w-full h-full p-4 sm:p-6 space-y-4 bg-bg-muted overflow-y-auto min-w-0">
         <SkeletonCard />
         <SkeletonCard />
         <SkeletonCard />
@@ -178,7 +178,7 @@ export function ConnectionsPanel({
   // Error State
   if (errorDetail) {
     return (
-      <div className="w-full h-full p-6 flex flex-col items-center justify-center bg-bg-muted min-w-0">
+      <div className="w-full h-full p-4 sm:p-6 flex flex-col items-center justify-center bg-bg-muted min-w-0">
         <ErrorState
           title="Network Connection Failed"
           description={errorDetail}
@@ -210,23 +210,23 @@ export function ConnectionsPanel({
     procedureConnections.length > 0;
 
   return (
-    <div className="w-full h-full p-6 space-y-6 bg-bg-muted overflow-y-auto font-body min-w-0">
-      {/* Prominent Evidence Alert Card (Above Grouped Connections) */}
+    <div className="w-full h-full p-4 sm:p-6 space-y-5 sm:space-y-6 bg-bg-muted overflow-y-auto font-body min-w-0">
+      {/* Prominent Evidence Alert Card */}
       {(activeRingA || activeRingB) && (
         <Card className="border-l-[3px] border-l-flag border-border bg-flag-bg shadow-sm overflow-hidden min-w-0">
-          <CardHeader className="p-6 pb-2 flex flex-row items-center justify-between space-y-0 min-w-0">
+          <CardHeader className="p-4 sm:p-6 pb-2 flex flex-row items-center justify-between space-y-0 min-w-0">
             <div className="flex items-center gap-2 text-flag min-w-0 flex-1 overflow-hidden mr-2">
               <ShieldAlert className="h-5 w-5 shrink-0" />
-              <CardTitle className="text-sm font-semibold tracking-tight text-text-primary truncate">
+              <CardTitle className="text-xs sm:text-sm font-semibold tracking-tight text-text-primary truncate">
                 {activeRingA ? 'Fraud Ring A Detected: Shared Office Scheme' : 'Fraud Ring B Detected: Billing Outlier Spike'}
               </CardTitle>
             </div>
-            <Badge variant="destructive" className="font-mono text-xs uppercase px-2 bg-flag text-white font-bold shrink-0">
+            <Badge variant="destructive" className="font-mono text-[10px] sm:text-xs uppercase px-2 bg-flag text-white font-bold shrink-0">
               High Evidence
             </Badge>
           </CardHeader>
 
-          <CardContent className="p-6 pt-1 space-y-2 text-xs text-text-primary break-words">
+          <CardContent className="p-4 sm:p-6 pt-1 space-y-2 text-xs text-text-primary break-words">
             {activeRingA && (
               <p className="leading-relaxed">
                 Shares office address <span className="font-mono font-semibold text-accent">{activeRingA.sharedNode.label}</span> with 2 other providers, all billing rare procedure{' '}
@@ -249,12 +249,12 @@ export function ConnectionsPanel({
 
       {/* Header Info for Selected Entity */}
       {rootNode && (
-        <div className="flex items-center justify-between border-b border-border pb-3 min-w-0">
-          <div className="min-w-0 flex-1 overflow-hidden mr-2">
+        <div className="flex items-center justify-between border-b border-border pb-3 min-w-0 gap-2">
+          <div className="min-w-0 flex-1 overflow-hidden">
             <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
               Connected Relationships For
             </span>
-            <h2 className="font-display text-base font-semibold text-text-primary flex items-center gap-2 mt-0.5 truncate" title={rootNode.label}>
+            <h2 className="font-display text-sm sm:text-base font-semibold text-text-primary flex items-center gap-2 mt-0.5 truncate" title={rootNode.label}>
               <span className="truncate">{rootNode.label}</span>
               <Badge variant="outline" className="font-mono text-[10px] uppercase border-accent/30 bg-accent-muted text-accent shrink-0">
                 {rootNode.type}
@@ -288,8 +288,8 @@ export function ConnectionsPanel({
                     : 'bg-surface border-border shadow-sm hover:border-accent/50'
                 }`}
               >
-                <CardContent className="p-4 flex items-center justify-between gap-3 min-w-0">
-                  <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
+                <CardContent className="p-3.5 sm:p-4 flex items-center justify-between gap-3 min-w-0">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 overflow-hidden">
                     <div
                       className={`h-9 w-9 rounded-md flex items-center justify-center shrink-0 border ${
                         entity.flagged
@@ -305,10 +305,10 @@ export function ConnectionsPanel({
                     </div>
 
                     <div className="min-w-0 flex-1 overflow-hidden">
-                      <div className="font-display text-sm font-semibold text-text-primary truncate" title={entity.label}>
+                      <div className="font-display text-xs sm:text-sm font-semibold text-text-primary truncate" title={entity.label}>
                         {entity.label}
                       </div>
-                      <div className="font-mono text-xs text-text-muted flex items-center gap-2 mt-0.5 truncate" title={`ID: ${entity.id}${viaNode ? ` • Location: ${viaNode.label}` : ''}`}>
+                      <div className="font-mono text-[11px] sm:text-xs text-text-muted flex items-center gap-2 mt-0.5 truncate" title={`ID: ${entity.id}${viaNode ? ` • Location: ${viaNode.label}` : ''}`}>
                         <span className="shrink-0">ID: {entity.id}</span>
                         {viaNode && <span className="truncate">• Location: {viaNode.label}</span>}
                       </div>
@@ -319,7 +319,7 @@ export function ConnectionsPanel({
                     variant={entity.flagged ? 'destructive' : 'outline'}
                     size="sm"
                     onClick={() => onSelectNode(entity)}
-                    className="h-8 gap-1 text-xs font-mono shrink-0 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                    className="h-9 sm:h-8 gap-1 text-xs font-mono shrink-0 min-h-[36px] sm:min-h-0 focus-visible:ring-2 focus-visible:ring-accent"
                   >
                     <span>View</span>
                     <ChevronRight className="h-3.5 w-3.5" />
@@ -351,8 +351,8 @@ export function ConnectionsPanel({
                     : 'bg-surface border-border shadow-sm hover:border-accent/50'
                 }`}
               >
-                <CardContent className="p-4 flex items-center justify-between gap-3 min-w-0">
-                  <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
+                <CardContent className="p-3.5 sm:p-4 flex items-center justify-between gap-3 min-w-0">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 overflow-hidden">
                     <div
                       className={`h-9 w-9 rounded-md flex items-center justify-center shrink-0 border ${
                         entity.flagged
@@ -368,10 +368,10 @@ export function ConnectionsPanel({
                     </div>
 
                     <div className="min-w-0 flex-1 overflow-hidden">
-                      <div className="font-display text-sm font-semibold text-text-primary truncate" title={entity.label}>
+                      <div className="font-display text-xs sm:text-sm font-semibold text-text-primary truncate" title={entity.label}>
                         {entity.label}
                       </div>
-                      <div className="font-mono text-xs text-text-muted flex items-center gap-2 mt-0.5 truncate" title={`ID: ${entity.id}${viaNode ? ` • Phone: ${viaNode.label}` : ''}`}>
+                      <div className="font-mono text-[11px] sm:text-xs text-text-muted flex items-center gap-2 mt-0.5 truncate" title={`ID: ${entity.id}${viaNode ? ` • Phone: ${viaNode.label}` : ''}`}>
                         <span className="shrink-0">ID: {entity.id}</span>
                         {viaNode && <span className="truncate">• Phone: {viaNode.label}</span>}
                       </div>
@@ -382,7 +382,7 @@ export function ConnectionsPanel({
                     variant={entity.flagged ? 'destructive' : 'outline'}
                     size="sm"
                     onClick={() => onSelectNode(entity)}
-                    className="h-8 gap-1 text-xs font-mono shrink-0 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                    className="h-9 sm:h-8 gap-1 text-xs font-mono shrink-0 min-h-[36px] sm:min-h-0 focus-visible:ring-2 focus-visible:ring-accent"
                   >
                     <span>View</span>
                     <ChevronRight className="h-3.5 w-3.5" />
@@ -414,8 +414,8 @@ export function ConnectionsPanel({
                     : 'bg-surface border-border shadow-sm hover:border-accent/50'
                 }`}
               >
-                <CardContent className="p-4 flex items-center justify-between gap-3 min-w-0">
-                  <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
+                <CardContent className="p-3.5 sm:p-4 flex items-center justify-between gap-3 min-w-0">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 overflow-hidden">
                     <div
                       className={`h-9 w-9 rounded-md flex items-center justify-center shrink-0 border ${
                         entity.flagged
@@ -431,10 +431,10 @@ export function ConnectionsPanel({
                     </div>
 
                     <div className="min-w-0 flex-1 overflow-hidden">
-                      <div className="font-display text-sm font-semibold text-text-primary truncate" title={entity.label}>
+                      <div className="font-display text-xs sm:text-sm font-semibold text-text-primary truncate" title={entity.label}>
                         {entity.label}
                       </div>
-                      <div className="font-mono text-xs text-text-muted flex items-center gap-2 mt-0.5 truncate" title={`ID: ${entity.id}${viaNode ? ` • Code: ${viaNode.label}` : ''}`}>
+                      <div className="font-mono text-[11px] sm:text-xs text-text-muted flex items-center gap-2 mt-0.5 truncate" title={`ID: ${entity.id}${viaNode ? ` • Code: ${viaNode.label}` : ''}`}>
                         <span className="shrink-0">ID: {entity.id}</span>
                         {viaNode && <span className="truncate">• Code: {viaNode.label}</span>}
                       </div>
@@ -445,7 +445,7 @@ export function ConnectionsPanel({
                     variant={entity.flagged ? 'destructive' : 'outline'}
                     size="sm"
                     onClick={() => onSelectNode(entity)}
-                    className="h-8 gap-1 text-xs font-mono shrink-0 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                    className="h-9 sm:h-8 gap-1 text-xs font-mono shrink-0 min-h-[36px] sm:min-h-0 focus-visible:ring-2 focus-visible:ring-accent"
                   >
                     <span>View</span>
                     <ChevronRight className="h-3.5 w-3.5" />

@@ -59,7 +59,7 @@ export function GraphCanvas({
     return data?.nodes.some((n) => n.flagged) || false;
   }, [data]);
 
-  // Compute Ego/Radial Static Layout
+  // Compute Radial Ego Layout with Responsive Radius Clamping
   const { positionedNodes, centerId } = useMemo(() => {
     if (!data || !data.nodes || data.nodes.length === 0) {
       return { positionedNodes: new Map<string, PositionedNode>(), centerId: '' };
@@ -116,9 +116,11 @@ export function GraphCanvas({
     });
 
     const minDim = Math.min(cx, cy);
-    const r1 = Math.max(110, minDim * 0.38);
-    const r2 = Math.max(210, minDim * 0.65);
-    const r3 = Math.max(300, minDim * 0.88);
+    // Clamp outermost radii to never exceed 0.42 * minDim so layout fits mobile screens cleanly
+    const maxRadiusBound = Math.min(420, minDim * 0.84);
+    const r1 = Math.max(65, maxRadiusBound * 0.35);
+    const r2 = Math.max(120, maxRadiusBound * 0.68);
+    const r3 = Math.max(165, maxRadiusBound * 0.95);
 
     const posMap = new Map<string, PositionedNode>();
 
@@ -129,7 +131,7 @@ export function GraphCanvas({
         x: cx,
         y: cy,
         hop: 0,
-        radius: 10,
+        radius: minDim < 250 ? 8 : 10,
       });
     }
 
@@ -145,7 +147,7 @@ export function GraphCanvas({
         if (node.id === rootId) return;
 
         const angle = angleOffset + (idx / count) * 2 * Math.PI;
-        const nodeRadius = node.flagged ? 8 : 6;
+        const nodeRadius = minDim < 250 ? (node.flagged ? 7 : 5) : (node.flagged ? 8 : 6);
 
         posMap.set(node.id, {
           ...node,
@@ -182,9 +184,10 @@ export function GraphCanvas({
     const cx = width / 2;
     const cy = height / 2;
     const minDim = Math.min(cx, cy);
-    const r1 = Math.max(110, minDim * 0.38);
-    const r2 = Math.max(210, minDim * 0.65);
-    const r3 = Math.max(300, minDim * 0.88);
+    const maxRadiusBound = Math.min(420, minDim * 0.84);
+    const r1 = Math.max(65, maxRadiusBound * 0.35);
+    const r2 = Math.max(120, maxRadiusBound * 0.68);
+    const r3 = Math.max(165, maxRadiusBound * 0.95);
 
     // 1. Draw Concentric Ring Guidelines
     [r1, r2, r3].forEach((r, idx) => {
@@ -196,9 +199,11 @@ export function GraphCanvas({
       ctx.stroke();
       ctx.setLineDash([]);
 
-      ctx.font = '10px "IBM Plex Mono", monospace';
-      ctx.fillStyle = '#9CA3AF';
-      ctx.fillText(`${idx + 1}-Hop Ring`, cx + 8, cy - r + 14);
+      if (minDim > 200) {
+        ctx.font = '9px "IBM Plex Mono", monospace';
+        ctx.fillStyle = '#9CA3AF';
+        ctx.fillText(`${idx + 1}-Hop Ring`, cx + 8, cy - r + 12);
+      }
     });
 
     // 2. Draw Graph Edges
@@ -215,7 +220,7 @@ export function GraphCanvas({
       }
     });
 
-    // 3. Draw Graph Nodes (No blur glow — crisp solid 2px borders)
+    // 3. Draw Graph Nodes (Minimum 9px font size floor)
     positionedNodes.forEach((node) => {
       const { x, y, radius, flagged, id, type, label } = node;
       const isCenter = id === centerId;
@@ -244,9 +249,9 @@ export function GraphCanvas({
       ctx.arc(x, y, isHovered ? radius + 2 : radius, 0, 2 * Math.PI);
 
       if (isFlagged) {
-        ctx.fillStyle = '#DC2626'; // --flag red
+        ctx.fillStyle = '#DC2626';
       } else if (isCenter) {
-        ctx.fillStyle = '#4F46E5'; // --accent indigo
+        ctx.fillStyle = '#4F46E5';
       } else {
         const baseColor = COLOR_MAP[type] || COLOR_MAP.unknown;
         ctx.fillStyle = hasFlaggedNode ? `${baseColor}55` : baseColor;
@@ -258,16 +263,19 @@ export function GraphCanvas({
       ctx.strokeStyle = '#FFFFFF';
       ctx.stroke();
 
-      // Node Label Text
-      const fontSize = isCenter ? 12 : isFlagged ? 11 : 10;
+      // Node Label Text (Font floor at minimum 9px)
+      const computedSize = isCenter ? 12 : isFlagged ? 11 : 10;
+      const fontSize = Math.max(9, computedSize);
+
       ctx.font = `${isCenter || isFlagged ? '600' : 'normal'} ${fontSize}px Inter, sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
 
       ctx.fillStyle = isFlagged ? '#DC2626' : isCenter ? '#111827' : '#6B7280';
 
-      const truncatedLabel = label && label.length > 24 ? `${label.substring(0, 22)}...` : label || id;
-      ctx.fillText(truncatedLabel, x, y + radius + 5);
+      const maxChars = minDim < 220 ? 14 : 22;
+      const truncatedLabel = label && label.length > maxChars ? `${label.substring(0, maxChars - 2)}...` : label || id;
+      ctx.fillText(truncatedLabel, x, y + radius + 4);
 
       ctx.restore();
     });
@@ -285,7 +293,7 @@ export function GraphCanvas({
 
       positionedNodes.forEach((node) => {
         const dist = Math.hypot(mouseX - node.x, mouseY - node.y);
-        if (dist <= node.radius + 6) {
+        if (dist <= node.radius + 12) {
           hitId = node.id;
         }
       });
@@ -306,7 +314,27 @@ export function GraphCanvas({
 
       positionedNodes.forEach((node) => {
         const dist = Math.hypot(clickX - node.x, clickY - node.y);
-        if (dist <= node.radius + 6) {
+        if (dist <= node.radius + 14) {
+          onSelectNode(node);
+        }
+      });
+    },
+    [positionedNodes, onSelectNode]
+  );
+
+  // Touch Handler for Mobile Selection
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent<HTMLCanvasElement>) => {
+      const canvas = canvasRef.current;
+      if (!canvas || e.changedTouches.length === 0) return;
+      const touch = e.changedTouches[0];
+      const rect = canvas.getBoundingClientRect();
+      const touchX = touch.clientX - rect.left;
+      const touchY = touch.clientY - rect.top;
+
+      positionedNodes.forEach((node) => {
+        const dist = Math.hypot(touchX - node.x, touchY - node.y);
+        if (dist <= node.radius + 16) {
           onSelectNode(node);
         }
       });
@@ -350,17 +378,18 @@ export function GraphCanvas({
   return (
     <div ref={containerRef} className="w-full h-full relative overflow-hidden bg-bg-muted">
       {/* Consolidated Single Quiet Text Line Legend */}
-      <div className="absolute top-3 left-3 z-10 bg-surface/90 backdrop-blur-sm px-3 py-1.5 rounded-md border border-border text-[11px] font-mono text-text-muted shadow-sm flex items-center gap-2">
-        <span className="h-2 w-2 rounded-full bg-flag inline-block" />
-        <span className="font-semibold text-text-primary">Flagged Evidence</span>
-        <span>• Center Anchor (Indigo) • Hop 1/2/3 Entities</span>
+      <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 bg-surface/95 backdrop-blur-sm px-2.5 py-1 rounded-md border border-border text-[10px] sm:text-[11px] font-mono text-text-muted shadow-sm flex items-center gap-1.5 sm:gap-2 max-w-[90%] truncate">
+        <span className="h-2 w-2 rounded-full bg-flag shrink-0 inline-block" />
+        <span className="font-semibold text-text-primary shrink-0">Flagged Evidence</span>
+        <span className="truncate">• Center Anchor • Hop 1/2/3 Entities</span>
       </div>
 
       <canvas
         ref={canvasRef}
-        style={{ width: '100%', height: '100%', display: 'block' }}
+        style={{ width: '100%', height: '100%', display: 'block', touchAction: 'none' }}
         onMouseMove={handleCanvasMouseMove}
         onClick={handleCanvasClick}
+        onTouchEnd={handleTouchEnd}
       />
     </div>
   );

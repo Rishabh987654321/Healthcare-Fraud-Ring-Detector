@@ -25,7 +25,7 @@ export function EntityDetailPanel({
 
   if (loading) {
     return (
-      <div className="p-6 space-y-6 font-body bg-surface h-full">
+      <div className="p-4 sm:p-6 space-y-6 font-body bg-surface h-full">
         <SkeletonText lines={2} />
         <SkeletonRow />
         <SkeletonRow />
@@ -41,7 +41,7 @@ export function EntityDetailPanel({
 
   if (error || !detail) {
     return (
-      <div className="p-6 h-full flex flex-col justify-center items-center bg-surface">
+      <div className="p-4 sm:p-6 h-full flex flex-col justify-center items-center bg-surface">
         <ErrorState
           title="Entity Details Unreachable"
           description={error || 'Could not load detail record for this entity.'}
@@ -59,7 +59,7 @@ export function EntityDetailPanel({
   const cypherQuery = CYPHER_QUERIES[cypherKey] || '';
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto space-y-6 p-6 font-body bg-surface min-w-0">
+    <div className="flex flex-col h-full overflow-y-auto space-y-5 p-4 sm:p-6 font-body bg-surface min-w-0">
       {/* Header */}
       <div className="border-b border-border pb-4 min-w-0">
         <div className="flex items-center justify-between gap-2 min-w-0">
@@ -68,7 +68,7 @@ export function EntityDetailPanel({
           </Badge>
           <span className="font-mono text-xs text-text-muted shrink-0">{detail.id}</span>
         </div>
-        <h2 className="font-display text-lg font-semibold text-text-primary mt-1 truncate" title={detail.name}>{detail.name}</h2>
+        <h2 className="font-display text-base sm:text-lg font-semibold text-text-primary mt-1 truncate" title={detail.name}>{detail.name}</h2>
         <p className="font-body text-xs text-text-muted flex items-center gap-1.5 mt-0.5 truncate">
           {detail.type === 'provider' ? (
             <>
@@ -84,9 +84,9 @@ export function EntityDetailPanel({
         </p>
       </div>
 
-      {/* Fraud Ring Alert Box (Signature 3px Solid Left Border) */}
+      {/* Fraud Ring Alert Box */}
       {(ringA || ringB) && (
-        <div className="p-4 rounded-lg border-l-[3px] border-l-flag border-border bg-flag-bg text-text-primary space-y-2 shadow-sm min-w-0 break-words">
+        <div className="p-3.5 sm:p-4 rounded-lg border-l-[3px] border-l-flag border-border bg-flag-bg text-text-primary space-y-2 shadow-sm min-w-0 break-words">
           <div className="flex items-center gap-2 text-flag font-display text-xs font-semibold uppercase tracking-wider">
             <ShieldAlert className="h-4 w-4 shrink-0" />
             <span>Flagged in Fraud Intelligence System</span>
@@ -134,7 +134,7 @@ export function EntityDetailPanel({
         )}
       </div>
 
-      {/* Claims Table */}
+      {/* Claims Section: Stacked Cards on Mobile (< sm), Table on Desktop (>= sm) */}
       <div className="space-y-3 pt-2 min-w-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-text-primary font-display text-xs font-semibold uppercase tracking-wider">
@@ -148,34 +148,56 @@ export function EntityDetailPanel({
             No claims recorded for this entity.
           </div>
         ) : (
-          <div className="rounded-md border border-border bg-surface overflow-hidden shadow-sm">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-bg-muted/60 border-border">
-                  <TableHead className="h-8 text-[10px] text-text-muted font-semibold">Claim ID / Date</TableHead>
-                  <TableHead className="h-8 text-[10px] text-text-muted font-semibold">Procedure</TableHead>
-                  <TableHead className="h-8 text-[10px] text-text-muted font-semibold text-right">Amount</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {detail.claims.slice(0, 15).map((claim) => (
-                  <TableRow key={claim.id} className="h-9 text-xs border-border hover:bg-bg-muted/40">
-                    <TableCell className="py-2">
-                      <div className="font-mono text-[11px] font-semibold text-text-primary">{claim.id}</div>
-                      <div className="text-[10px] text-text-muted">{claim.date}</div>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      <div className="font-mono text-[11px] text-accent font-semibold">{claim.procedureCode}</div>
-                      <div className="text-[10px] text-text-muted truncate max-w-[130px]" title={claim.procedureDescription}>{claim.procedureDescription}</div>
-                    </TableCell>
-                    <TableCell className="py-2 text-right font-mono font-semibold text-text-primary">
-                      ${claim.amount.toFixed(2)}
-                    </TableCell>
+          <>
+            {/* Desktop / Tablet View (>= sm): Standard Table */}
+            <div className="hidden sm:block rounded-md border border-border bg-surface overflow-hidden shadow-sm">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-bg-muted/60 border-border">
+                    <TableHead className="h-8 text-[10px] text-text-muted font-semibold">Claim ID / Date</TableHead>
+                    <TableHead className="h-8 text-[10px] text-text-muted font-semibold">Procedure</TableHead>
+                    <TableHead className="h-8 text-[10px] text-text-muted font-semibold text-right">Amount</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {detail.claims.slice(0, 15).map((claim) => (
+                    <TableRow key={claim.id} className="h-9 text-xs border-border hover:bg-bg-muted/40">
+                      <TableCell className="py-2">
+                        <div className="font-mono text-[11px] font-semibold text-text-primary">{claim.id}</div>
+                        <div className="text-[10px] text-text-muted">{claim.date}</div>
+                      </TableCell>
+                      <TableCell className="py-2">
+                        <div className="font-mono text-[11px] text-accent font-semibold">{claim.procedureCode}</div>
+                        <div className="text-[10px] text-text-muted truncate max-w-[130px]" title={claim.procedureDescription}>{claim.procedureDescription}</div>
+                      </TableCell>
+                      <TableCell className="py-2 text-right font-mono font-semibold text-text-primary">
+                        ${claim.amount.toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Mobile Stacked Card View (< sm): Responsive Cards */}
+            <div className="block sm:hidden space-y-2.5 min-w-0">
+              {detail.claims.slice(0, 15).map((claim) => (
+                <div key={claim.id} className="p-3 rounded-md border border-border bg-surface shadow-sm space-y-1.5 text-xs min-w-0">
+                  <div className="flex items-center justify-between font-mono text-[11px]">
+                    <span className="font-semibold text-text-primary">{claim.id}</span>
+                    <span className="font-bold text-accent">${claim.amount.toFixed(2)}</span>
+                  </div>
+                  <div className="text-text-muted text-[11px] flex items-center justify-between pt-0.5">
+                    <span className="font-mono text-accent font-semibold">{claim.procedureCode}</span>
+                    <span className="text-[10px]">{claim.date}</span>
+                  </div>
+                  <div className="text-[11px] text-text-muted truncate" title={claim.procedureDescription}>
+                    {claim.procedureDescription}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
