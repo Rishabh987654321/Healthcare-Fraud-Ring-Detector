@@ -225,16 +225,16 @@ data.
 
 ## Screenshots
 
+## Screenshots
+
 | | |
 |---|---|
-| ![Search & browse](screenshots/search.png) | |
-| Browsing/searching entities | |
-| ![Connections panel](screenshots/connections.png) | ![Ring diagram](screenshots/ring-diagram.png) |
-| Grouped connection evidence | Curated ring diagram |
-| ![Cypher query](screenshots/cypher.png) | ![Fraud ring evidence](screenshots/fraud-ring-evidence.png) |
-| Cypher query behind the detection | Evidence supporting the detected fraud ring |
-| ![Flagged provider details](screenshots/flagged-provider-detail.png) | |
-| Detailed information for a flagged provider | |
+| ![Search & browse](screenshots/search.png) | ![Connections panel](screenshots/connections.png) |
+| Browsing/searching entities | Grouped connection evidence |
+| ![Ring diagram](screenshots/ring-diagram.png) | ![Cypher query](screenshots/cypher.png) |
+| Curated ring diagram | Cypher query behind the detection |
+| ![Fraud ring evidence](screenshots/fraud-ring-evidence.png) | ![Flagged provider details](screenshots/flagged-provider-detail.png) |
+| Evidence supporting the detected fraud ring | Detailed information for a flagged provider |
 
 ## Testing
 
