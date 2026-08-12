@@ -242,8 +242,7 @@ given the project's time constraints.
 - The free CognoDB tier's size limits mean the seed dataset (~2,000 patients,
   ~155 providers, ~6,200 claims) is a small illustrative sample, not
   production scale.
-- No authentication/authorization layer — not in scope for this assignment,
-  but a real investigator tool would need role-based access to patient data.
+- Authentication and authorization: The current version does not include authentication or authorization. As a future enhancement, the system should implement role-based access control (RBAC) to ensure that only authorized investigators can access sensitive patient and provider data.
 
 ## Project structure
 
