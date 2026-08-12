@@ -4,25 +4,31 @@
 
 > ⚠️ **All data in this application is synthetic**, generated with [Faker](https://faker.readthedocs.io/) for demonstration purposes. No real patient, provider, or claims information is used anywhere in this project.
 
-🔗 **Live demo:** `[DEMO_URL — fill in after deploying]`
-🎥 **Screen recording:** `[VIDEO_URL — fill in after recording]`
-📦 **Repository:** `[REPO_URL]`
+🔗 **Live demo:** https://healthcare-fraud-ring-detector.vercel.app/
 
+🔧 **Backend API:** https://healthcare-fraud-ring-detector.onrender.com/
+
+📦 **Repository:** https://github.com/Rishabh987654321/Healthcare-Fraud-Ring-Detector
+
+🎥 **Demo:** See the product walkthrough below.
+## Demo
+
+![Healthcare Fraud Ring Detector Demo](screenshots/demo.gif)
 ---
 
 ## Table of contents
 
-- [The use case](#the-use-case)
-- [Why a graph database?](#why-a-graph-database)
-- [Data model](#data-model)
-- [Architecture](#architecture)
-- [Tech stack](#tech-stack)
-- [Setup & running locally](#setup--running-locally)
-- [Core queries, explained](#core-queries-explained)
-- [Screenshots](#screenshots)
-- [Testing](#testing)
-- [Limitations & future work](#limitations--future-work)
-- [Project structure](#project-structure)
+* [The use case](#the-use-case)
+* [Why a graph database?](#why-a-graph-database)
+* [Data model](#data-model)
+* [Architecture](#architecture)
+* [Tech stack](#tech-stack)
+* [Setup & running locally](#setup--running-locally)
+* [Core queries, explained](#core-queries-explained)
+* [Screenshots](#screenshots)
+* [Testing](#testing)
+* [Limitations & future work](#limitations--future-work)
+* [Project structure](#project-structure)
 
 ---
 
@@ -38,12 +44,12 @@ five times the rate of anyone else in their specialty.
 
 This app lets an investigator search any provider or patient and immediately see:
 
-- Who they're suspiciously connected to, and *why* (shared address, shared
+* Who they're suspiciously connected to, and *why* (shared address, shared
   phone, overlapping billing patterns) — explained in plain language, not raw
   query output.
-- A list of all currently detected fraud rings, each with a plain-English
+* A list of all currently detected fraud rings, each with a plain-English
   summary and a small, curated diagram of just that ring.
-- Full claim history for any entity, for manual review.
+* Full claim history for any entity, for manual review.
 
 ## Why a graph database?
 
@@ -55,20 +61,20 @@ gets structurally worse every time you add a new kind of connection to check.
 
 Concretely, in this project:
 
-- **Finding a ring** (`Provider`s sharing an `Address`, billing the same
+* **Finding a ring** (`Provider`s sharing an `Address`, billing the same
   `Procedure`, across overlapping `Patient`s) is a single 4-hop Cypher pattern.
   The equivalent in SQL is a chain of self-joins across a providers table, an
   addresses table, a claims table, and a procedures table — and it only grows
   messier as more connection types (shared phone, shared bank account, shared
   billing agent) get added later, since each one is another join, another
   index, another query to hand-maintain.
-- **"Who is connected to this flagged provider within 3 hops, through *any*
+* **"Who is connected to this flagged provider within 3 hops, through *any*
   combination of shared address or shared phone?"** — a genuinely awkward
   question in SQL, requiring a recursive CTE with manual cycle-guarding and a
   UNION across two join conditions. In Cypher, it's one variable-length
   relationship pattern: `-[:LOCATED_AT|HAS_PHONE*1..3]-`. Extending it to a
   third connection type later is a one-token change, not a rewrite.
-- This asymmetry — Cypher complexity staying roughly flat as the model grows,
+* This asymmetry — Cypher complexity staying roughly flat as the model grows,
   SQL complexity growing combinatorially — is the concrete argument for why a
   graph database earns its place here, rather than being a stylistic choice.
 
@@ -85,14 +91,14 @@ graph LR
     Provider -->|HAS_PHONE| Phone
 ```
 
-| Node | Key properties |
-|---|---|
-| `Patient` | `id`, `name`, `dob` |
-| `Provider` | `id`, `name`, `npi`, `specialty` |
-| `Claim` | `id`, `date`, `amount`, `status` |
+| Node        | Key properties                        |
+| ----------- | ------------------------------------- |
+| `Patient`   | `id`, `name`, `dob`                   |
+| `Provider`  | `id`, `name`, `npi`, `specialty`      |
+| `Claim`     | `id`, `date`, `amount`, `status`      |
 | `Procedure` | `code`, `description`, `typical_cost` |
-| `Address` | `id`, `line1`, `city`, `state`, `zip` |
-| `Phone` | `id`, `number` |
+| `Address`   | `id`, `line1`, `city`, `state`, `zip` |
+| `Phone`     | `id`, `number`                        |
 
 `Address` and `Phone` are modeled as **first-class nodes**, not string properties
 on `Patient`/`Provider`. This is the deliberate modeling decision that makes
@@ -104,7 +110,7 @@ and `Procedure.code`.
 
 ## Architecture
 
-```
+```text
 ┌────────────┐      REST/JSON       ┌──────────────┐     Bolt (Cypher)    ┌─────────┐
 │  React SPA │ ───────────────────► │ Django + DRF │ ───────────────────► │ CognoDB │
 │ (shadcn/   │ ◄─────────────────── │  (graph/     │ ◄─────────────────── │ (cloud) │
@@ -112,6 +118,16 @@ and `Procedure.code`.
 └────────────┘                      │  layer)      │
                                      └──────────────┘
 ```
+
+### Production deployment
+
+* **Frontend:** Vercel
+
+  * https://healthcare-fraud-ring-detector.vercel.app/
+* **Backend:** Render
+
+  * https://healthcare-fraud-ring-detector.onrender.com/
+* **Database:** CognoDB Cloud
 
 The frontend never talks to CognoDB directly — every request goes through the
 Django API. All Cypher lives in `backend/graph/queries.py`, called by a thin
@@ -121,13 +137,13 @@ driver — no string-concatenated Cypher anywhere in the codebase.
 
 ## Tech stack
 
-| Layer | Choice |
-|---|---|
-| Database | CognoDB (Neo4j-compatible, Bolt 5.x), official `neo4j` Python driver |
-| Backend | Python, Django, Django REST Framework |
-| Frontend | React, shadcn/ui, Tailwind CSS, Vite |
-| Seed data | Faker |
-| Hosting (demo) | `[fill in — e.g. Render (backend) + Vercel (frontend)]` |
+| Layer     | Choice                                                               |
+| --------- | -------------------------------------------------------------------- |
+| Database  | CognoDB (Neo4j-compatible, Bolt 5.x), official `neo4j` Python driver |
+| Backend   | Python, Django, Django REST Framework                                |
+| Frontend  | React, shadcn/ui, Tailwind CSS, Vite                                 |
+| Seed data | Faker                                                                |
+| Hosting   | Vercel (frontend) + Render (backend) + CognoDB Cloud (database)      |
 
 ## Setup & running locally
 
@@ -178,11 +194,15 @@ Visit `http://localhost:5173`, use the "Flagged Rings" tab to confirm both
 seeded rings appear, or search "Pendelton" to jump straight to a flagged
 provider.
 
+For the deployed version, visit:
+
+https://healthcare-fraud-ring-detector.vercel.app/
+
 ## Core queries, explained
 
 All three below are parameterized in the actual code — inline literals here are
 for readability only. Full text lives in `backend/graph/queries.py`, and the
-app itself has a **"View Cypher"** toggle in the entity detail panel and ring
+app itself has an **"View Cypher"** toggle in the entity detail panel and ring
 cards that shows the exact query behind whatever you're currently looking at.
 
 **1. Multi-hop fraud pattern** (`find_shared_address_rings`) — providers sharing
@@ -205,16 +225,16 @@ data.
 
 ## Screenshots
 
-> Add screenshots to a `/screenshots` folder in the repo and update the paths
-> below before submitting.
-
 | | |
 |---|---|
 | ![Search & browse](screenshots/search.png) | ![Flagged ring detected](screenshots/ring-detected.png) |
 | Browsing/searching entities | A detected ring with plain-language evidence |
 | ![Connections panel](screenshots/connections.png) | ![Ring diagram](screenshots/ring-diagram.png) |
 | Grouped connection evidence | Curated ring diagram |
-
+| ![Cypher query](screenshots/cypher.png) | ![Fraud ring evidence](screenshots/fraud-ring-evidence.png) |
+| Cypher query behind the detection | Evidence supporting the detected fraud ring |
+| ![Flagged provider details](screenshots/flagged-provider-detail.png) | |
+| Detailed information for a flagged provider | |
 ## Testing
 
 ```bash
@@ -222,7 +242,16 @@ cd backend
 python manage.py test graph
 ```
 
-`[X passing / Y total — fill in the actual number after running]`
+**Test result: 4 passing / 4 total**
+
+```text
+Found 4 test(s).
+....
+----------------------------------------------------------------------
+Ran 4 tests in 7.355s
+
+OK
+```
 
 These are integration tests run against the live seeded CognoDB instance
 (confirming the health check, both planted fraud rings, and entity search all
@@ -231,25 +260,25 @@ given the project's time constraints.
 
 ## Limitations & future work
 
-- Fraud-ring detection thresholds (patient overlap count, billing-rate
+* Fraud-ring detection thresholds (patient overlap count, billing-rate
   multiplier) are hardcoded constants tuned for this seed dataset, not
   configurable — a production version would expose these as tunable rules with
   a review/approval workflow rather than an automatic flag.
-- Detection currently covers two specific patterns (shared address + rare
+* Detection currently covers two specific patterns (shared address + rare
   procedure, and billing-rate outliers). Real fraud detection would combine
   many more signals (claim timing patterns, upcoding, patient identity
   verification) and likely a scoring model rather than binary rules.
-- The free CognoDB tier's size limits mean the seed dataset (~2,000 patients,
+* The free CognoDB tier's size limits mean the seed dataset (~2,000 patients,
   ~155 providers, ~6,200 claims) is a small illustrative sample, not
   production scale.
-- Authentication and authorization: The current version does not include authentication or authorization. As a future enhancement, the system should implement role-based access control (RBAC) to ensure that only authorized investigators can access sensitive patient and provider data.
+* Authentication and authorization: The current version does not include authentication or authorization. As a future enhancement, the system should implement role-based access control (RBAC) to ensure that only authorized investigators can access sensitive patient and provider data.
 
 ## Project structure
 
-```
+```text
 backend/
 ├── config/              # Django settings, env loading
-├── graph/                # All CognoDB interaction — connection, queries, services, views
+├── graph/               # All CognoDB interaction — connection, queries, services, views
 ├── seed/                 # Faker-based seed script, plants 2 fraud rings
 └── requirements.txt
 
