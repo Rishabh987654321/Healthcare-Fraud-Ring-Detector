@@ -225,8 +225,6 @@ data.
 
 ## Screenshots
 
-## Screenshots
-
 | | |
 |---|---|
 | ![Search & browse](screenshots/search.png) | ![Connections panel](screenshots/connections.png) |
