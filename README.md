@@ -227,14 +227,15 @@ data.
 
 | | |
 |---|---|
-| ![Search & browse](screenshots/search.png) | ![Flagged ring detected](screenshots/ring-detected.png) |
-| Browsing/searching entities | A detected ring with plain-language evidence |
+| ![Search & browse](screenshots/search.png) | |
+| Browsing/searching entities | |
 | ![Connections panel](screenshots/connections.png) | ![Ring diagram](screenshots/ring-diagram.png) |
 | Grouped connection evidence | Curated ring diagram |
 | ![Cypher query](screenshots/cypher.png) | ![Fraud ring evidence](screenshots/fraud-ring-evidence.png) |
 | Cypher query behind the detection | Evidence supporting the detected fraud ring |
 | ![Flagged provider details](screenshots/flagged-provider-detail.png) | |
 | Detailed information for a flagged provider | |
+
 ## Testing
 
 ```bash
