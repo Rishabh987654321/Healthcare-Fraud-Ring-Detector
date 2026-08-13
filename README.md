@@ -1,6 +1,6 @@
 # Healthcare Fraud Ring Detector
 
-**A graph-native investigation tool for surfacing healthcare fraud rings — built on CognoDB, Django, and React.**
+**A web application that helps healthcare fraud investigators find fraud rings — clusters of providers and patients secretly connected through shared addresses, phone numbers, or suspicious billing patterns — using CognoDB, a Neo4j-compatible graph database, as the data layer. Built with Django + DRF on the backend and React + shadcn/ui + Tailwind on the frontend.**
 
 > ⚠️ **All data in this application is synthetic**, generated with [Faker](https://faker.readthedocs.io/) for demonstration purposes. No real patient, provider, or claims information is used anywhere in this project.
 
