@@ -280,10 +280,22 @@ def find_billing_outlier_rings(driver: Driver) -> List[Dict[str, Any]]:
     return rings
 
 
+from django.core.cache import cache
+
+FLAGGED_IDS_CACHE_KEY = "flagged_node_ids"
+FLAGGED_IDS_CACHE_TTL = 300  # 5 minutes — static seed dataset in demo context
+
+
 def get_flagged_node_ids(driver: Driver) -> set:
     """
     Returns set of all node IDs (providers, addresses, phones) that are part of detected fraud rings.
+    Uses Django LocMemCache with a 5-minute TTL to avoid re-running expensive
+    multi-hop ring scans on every /network/ call.
     """
+    cached = cache.get(FLAGGED_IDS_CACHE_KEY)
+    if cached is not None:
+        return cached
+
     flagged_ids = set()
     ring_a_list = find_shared_address_rings(driver)
     for ring in ring_a_list:
@@ -298,6 +310,9 @@ def get_flagged_node_ids(driver: Driver) -> set:
         for p in ring["providers"]:
             flagged_ids.add(p["id"])
 
+    # Note: TTL-based caching is appropriate here because seed data is static after seeding.
+    # A production pipeline with continuous ingestion would require explicit cache invalidation.
+    cache.set(FLAGGED_IDS_CACHE_KEY, flagged_ids, FLAGGED_IDS_CACHE_TTL)
     return flagged_ids
 
 
